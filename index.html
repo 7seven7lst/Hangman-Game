@@ -8,23 +8,37 @@
   <!-- Optional theme -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
   <!-- Customized css -->
-  <link rel="styleshee" hred="./assets/css/style.css">
+  <link rel="stylesheet" href="./assets/css/style.css">
 </head>
 <body>
-  <div>
-    <span>Guess this word:</span>
-    <span id="answer"></span>
-  </div>
+  <div class="container">
+    <div class="row col-xs-6 col-xs-offset-3" style="margin-top:10%">
+      <div>
+        <h3>Guess this word:</h3>
+        <span id="answer"></span>
+      </div>
 
-  <div>
-    <span>Turns Remain:</span>
-    <span id="turns-remain"></span>
-  </div>
+      <div>
+        <h3>Turns Remain:</h3>
+        <span id="turns-remain"></span>
+      </div>
 
-  <div>
-    <span>Used letters:</span>
-    <span id="used-letters"></span>
+      <div>
+        <h3>Used letters:</h3>
+        <span id="used-letters"></span>
+      </div>
+
+      <div>
+        <h3 id="game-status" class="warning"></h3>
+      </div>
+      <div class="col-xs-12 text-center"> 
+        <button class="btn" id="continue-button">Continue?</button>
+      </div>
+      
+      <div id="game-ending-content"></div>
+    </div>
   </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.6/lodash.min.js"></script>
   <script type="text/javascript" src="./assets/javascript/game.js"></script>
 </body>
 </html>

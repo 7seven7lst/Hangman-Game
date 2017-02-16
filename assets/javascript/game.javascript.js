@@ -1,6 +1,7 @@
 "use strict";
-const words =["aerosmith", "big bang", "bon jovi", "coldplay", "epica", "maroon 5", "nightwish", "2pac"];
-const youtubeMusicMap = {
+
+var words = ["aerosmith", "big bang", "bon jovi", "coldplay", "epica", "maroon 5", "nightwish", "2pac"];
+var youtubeMusicMap = {
 	"aerosmith": "IP3wQc2gh8A",
 	"bon jovi": "TLCQT2F4PT4",
 	"big bang": "kBWrEZp1RCA",
@@ -8,103 +9,108 @@ const youtubeMusicMap = {
 	"epica": "Jrp0ajcPCCE",
 	"maroon 5": "7piVTfuCkUg",
 	"nightwish": "-yFXrhsA3oI",
-	"2pac": "0bHn7tKj0Yo",
+	"2pac": "0bHn7tKj0Yo"
 };
 
-let initializeGame = words => {
-	let index = Math.floor(Math.random() * (words.length));
-	let wordLength = words[index].length;
-	let word = words[index];
-	let response = [], answer = [], guessed= [], turnsRemain = wordLength;
-	_.forEach(word, char => {
-		if (char===" ") {
+var initializeGame = function initializeGame(words) {
+	var index = Math.floor(Math.random() * words.length);
+	var wordLength = words[index].length;
+	var word = words[index];
+	var response = [],
+	    answer = [],
+	    guessed = [],
+	    turnsRemain = wordLength;
+	_.forEach(word, function (char) {
+		if (char === " ") {
 			response.push(" ");
 		} else {
 			response.push("_");
 		}
 		answer.push(char);
-	})
+	});
 	document.getElementById("continue-button").setAttribute("class", "hidden");
 	document.getElementById("game-ending-content").innerHTML = '';
 	return {
-		response,
-		answer,
-		guessed, 
-		turnsRemain,
+		response: response,
+		answer: answer,
+		guessed: guessed,
+		turnsRemain: turnsRemain
 	};
-}	
+};
 
-let updateGameStatus = (gameStatus, guessedLetter)=> {
-	if (gameStatus.answer.indexOf(guessedLetter) !== -1){ // guessed correct
+var updateGameStatus = function updateGameStatus(gameStatus, guessedLetter) {
+	if (gameStatus.answer.indexOf(guessedLetter) !== -1) {
+		// guessed correct
 		gameStatus.response = updateResponse(gameStatus.response, gameStatus.answer, guessedLetter);
-	} else { // guess wrong
+	} else {
+		// guess wrong
 		gameStatus.turnsRemain--;
-
 	}
 	gameStatus.guessed.push(guessedLetter);
 	return gameStatus;
-}
+};
 
-let updateResponse = (response, answer, letter) =>{
-	_.forEach(answer, (char, i) =>{
-		if (char ===letter){
+var updateResponse = function updateResponse(response, answer, letter) {
+	_.forEach(answer, function (char, i) {
+		if (char === letter) {
 			response[i] = letter;
 		}
-	})
+	});
 	return response;
-}
+};
 
-let determineGameResult = (gameStatus)=>{
+var determineGameResult = function determineGameResult(gameStatus) {
 	if (gameStatus.response.join("") === gameStatus.answer.join("")) {
 		return "win";
-	} else if (gameStatus.turnsRemain <1){
+	} else if (gameStatus.turnsRemain < 1) {
 		return "lose";
 	} else {
 		return "continue";
 	}
-}
+};
 
-let updateDashboard = (gameStatus, status)=>{
+var updateDashboard = function updateDashboard(gameStatus, status) {
 	document.getElementById("answer").innerHTML = gameStatus.response.join(" ");
 	document.getElementById("turns-remain").innerHTML = gameStatus.turnsRemain;
-	document.getElementById("used-letters").innerHTML = gameStatus.guessed.join (" ");
-	if (status === "win"){
+	document.getElementById("used-letters").innerHTML = gameStatus.guessed.join(" ");
+	if (status === "win") {
 		document.getElementById("game-status").innerHTML = "You win!";
 		window.speechSynthesis.speak(new SpeechSynthesisUtterance("Oh yes, You Win!"));
 		document.getElementById("continue-button").setAttribute("class", "btn visible");
-		let youtubeFrame = document.createElement("iframe");
+		var youtubeFrame = document.createElement("iframe");
 		youtubeFrame.setAttribute("width", 0);
 		youtubeFrame.setAttribute("height", 0);
-		youtubeFrame.setAttribute("src", `https://www.youtube.com/embed/${youtubeMusicMap[gameStatus.answer.join("")]}?autoplay=1&start=30`);
+		youtubeFrame.setAttribute("src", "https://www.youtube.com/embed/" + youtubeMusicMap[gameStatus.answer.join("")] + "?autoplay=1&start=30");
 		youtubeFrame.setAttribute("frameborder", 0);
 		document.getElementById("game-ending-content").appendChild(youtubeFrame);
 	} else if (status === "lose") {
 		document.getElementById("game-status").innerHTML = "You lost!";
 		window.speechSynthesis.speak(new SpeechSynthesisUtterance("Sorry You Lost!"));
 		document.getElementById("continue-button").setAttribute("class", "btn visible");
-		let hangmanPic = document.createElement("img");
-		hangmanPic.setAttribute("src", `./assets/images/hangman.png`);
+		var hangmanPic = document.createElement("img");
+		hangmanPic.setAttribute("src", "./assets/images/hangman.png");
 		document.getElementById("game-ending-content").appendChild(hangmanPic);
 	} else {
 		document.getElementById("game-status").innerHTML = "";
 		window.speechSynthesis.speak(new SpeechSynthesisUtterance("Yo"));
 	}
-}
+};
 
-let gameStatus = initializeGame(words);
-let guessedWord, status;
+var gameStatus = initializeGame(words);
+var guessedWord = void 0,
+    status = void 0;
 updateDashboard(gameStatus, "continue");
-document.onkeyup = event => {
-	if (gameStatus.turnsRemain >=1 && status!=="win") {
-		guessedWord= event.key.toLowerCase();
+document.onkeyup = function (event) {
+	if (gameStatus.turnsRemain >= 1 && status !== "win") {
+		guessedWord = event.key.toLowerCase();
 		gameStatus = updateGameStatus(gameStatus, guessedWord);
 		status = determineGameResult(gameStatus);
 		updateDashboard(gameStatus, status);
 	}
-}
+};
 
-document.getElementById("continue-button").onclick = event => {
-	gameStatus =initializeGame(words);
+document.getElementById("continue-button").onclick = function (event) {
+	gameStatus = initializeGame(words);
 	status = determineGameResult(gameStatus);
 	updateDashboard(gameStatus, status);
-}
+};
